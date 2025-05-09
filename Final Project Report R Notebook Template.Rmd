@@ -1,0 +1,500 @@
+---
+title: "Final Project Report"
+output:
+  html_document:
+    df_print: paged
+---
+
+#Calorie contribution of Fast Foods in Famous Fast Food Chains#
+
+**Student Name**: Madusha Lakmali Wijesiinghe
+
+**Student ID**: M23W0114
+
+## Dataset
+https://www.kaggle.com/datasets/ulrikthygepedersen/fastfood-nutrition
+
+
+
+I obtained my data set from "kaggle" web site and usability score of the data set is 10.00. This data set represents nutritional information on different types of fast foods available in famous fast food chains around the world. Mcdonalds, Chick Fil-A, Sonic, Arbys, Burger King, Dairy Queen, Subway and Taco Bell food chains have selected for this study. 
+
+Researchers of this study have collected data on total calorie content, total fat content, calorie content from fat, saturated fat content, cholesterol, trans fat content, sodium, total carbohydrate content, total fat content, sugar content, protein content, micro nutrient content (vitamin A, vitamin C and Calcium).
+
+The rate of fast-food consumption has increased all over the world. It is one of the major factors for spreading noncommunicable diseases such as obesity, diabetes, and hyperlipidemia. As a clinical dietitian and a nutritionist, I attracted to this data set since it could give me a clear insight of energy and nutrient intake of people by consuming fast food from popular food chains. The main reasons for fast food consumption are easy availability, affordability, and convenience though it leads to high calorie consumption.
+
+By referring to the course content, I analyzed this data set by using R Studio software. I built up two research questions based on this data set. Firstly, I wanted to compare total calorie content of fast foods between significantly well known food chains, called McDonalds and Burger King. Further, I tried to find out whether is there any relationship between total calorie content and total fat content of fast foods in all outlets and calculate the median of total calorie intake and macro nutrient content. Based on the hypothesis I made, plotted a bar plot and a scatter plot to visualize data.
+
+
+In conclusion, analysis of this data set on total calorie, macro nutrient and selected micro nutrient content of different fast food in popular fast food chains would help me to understand about nutrient intake of the population. I could be able to apply that knowledge to find out a relationship between noncommunicable diseases and fast food consumption by further studies.
+
+
+
+
+
+#Data Set on Fast Food
+
+```{r}
+
+fastfood<-read.csv("C:\\Users\\A576\\Desktop\\KCGI\\SEMESTER1\\Analysis1\\AssignmentProject\\fastfood.csv")
+fastfood
+
+
+```
+
+**Removal of data raw that contain NA for Protein in Burger King Restaurant data**
+
+```{r}
+new_fastfood <- fastfood[-c(206), ]
+new_fastfood
+```
+
+## Research Questions and Hypotheses
+
+**Research Question No. 01**
+Is there a difference between total calorie content of fast food available in Burger King and MacDonalds?
+
+Null Hypothesis:
+
+There is no difference between total calorie content of available fast food in Burger King and MacDonalds.
+
+
+
+Alternative Hypothesis:
+
+Total Calorie content of available fast foods in MacDonalds is greater than the total calorie content of available fast foods in Burger King.
+
+
+
+**Research Question No. 02**
+ Is there a relationship between total calorie content and total fat content of fast food available in studied restaurants?
+
+Null Hypothesis:
+
+There is no relationship between total calorie content and total fat content of fast foods available in restaurants.
+
+
+
+Alternative Hypothesis:
+
+Higher amount of total fat content results higher total calorie content in fast foods.
+
+## Visualizations
+
+**Research Question No. 01**
+
+Data Visualization: Stacked Bar Plot
+
+I would like to use bar plot to compare total calorie content of fast food in studied restaurants and among them I am planning to compare most famous restaurants, Burger King and MacDonalds. Further, I want to indicate the distribution of calorie content from protein, fat and carbohydrate for total calorie content. Therefore, I would select Stacked Bar Plot to see the result for this research question.
+
+x axis - restaurant type
+
+y axis - calorie content
+
+
+
+**Research Question No. 02**
+
+Data Visualization: Scatter plot
+
+I selected scatter plot to test the relationship between total calorie content and total fat content of fast foods. I wanted to see whether there is a positive relationship between these 2 parameters.
+
+
+
+References:
+
+ Data-to-viz
+
+### Visualization 1
+
+
+**Separation of total calorie data according to their restaurant type**
+```{r}
+Mcdonalds=new_fastfood$calories[new_fastfood$restaurant=='Mcdonalds']
+Mcdonalds
+```
+
+
+```{r}
+BurgerKing=new_fastfood$calories[new_fastfood$restaurant=='Burger King']
+BurgerKing
+```
+
+
+```{r}
+Subway=new_fastfood$calories[new_fastfood$restaurant=='Subway']
+Subway
+```
+
+
+```{r}
+TacoBell = new_fastfood$calories[new_fastfood$restaurant=='Taco Bell']
+TacoBell
+```
+
+
+
+
+
+
+```{r}
+ChickFilA = new_fastfood$calories[new_fastfood$restaurant=='Chick Fil-A']
+ChickFilA
+```
+```{r}
+Sonic = new_fastfood$calories[new_fastfood$restaurant=='Sonic']
+Sonic
+```
+
+```{r}
+Dairy_Queen= new_fastfood$calories[new_fastfood$restaurant=='Dairy Queen']
+Dairy_Queen
+```
+
+
+
+```{r}
+Arbys= new_fastfood$calories[new_fastfood$restaurant=='Arbys']
+Arbys
+```
+
+
+
+**calculating Average Of Total Calorie Value Of Each Restaurant**
+```{r}
+meanCalorie <- mean(Mcdonalds)
+meanCalorie
+```
+https://r-lang.com/how-to-calculate-average-in-r/
+
+```{r}
+meanCalorie<- mean(BurgerKing)
+meanCalorie
+```
+```{r}
+meanCalorie<- mean(Dairy_Queen)
+meanCalorie
+```
+
+
+```{r}
+meanCalorie<- mean(Subway)
+meanCalorie
+```
+
+
+```{r}
+meanCalorie <- mean(TacoBell)
+meanCalorie
+```
+
+
+```{r}
+meanCalorie <- mean(ChickFilA)
+meanCalorie
+```
+
+
+```{r}
+meanCalorie <- mean(Sonic)
+meanCalorie
+```
+
+
+```{r}
+meanCalorie <- mean(Arbys)
+meanCalorie
+```
+
+
+
+**Separation of protein quantity data according to their restaurant type**
+```{r}
+Mcdonalds_Protein=new_fastfood$protein[new_fastfood$restaurant=='Mcdonalds']
+Mcdonalds_Protein
+
+BurgerKing_Protein=new_fastfood$protein[new_fastfood$restaurant=='Burger King']
+BurgerKing_Protein
+
+Subway_Protein=new_fastfood$protein[new_fastfood$restaurant=='Subway']
+Subway_Protein
+
+TacoBell_Protein = new_fastfood$protein[new_fastfood$restaurant=='Taco Bell']
+TacoBell_Protein
+
+ChickFilA_Protein = new_fastfood$protein[new_fastfood$restaurant=='Chick Fil-A']
+ChickFilA_Protein
+
+Dairy_Queen_Protein = new_fastfood$protein[new_fastfood$restaurant=='Chick Fil-A']
+Dairy_Queen_Protein
+
+Sonic_Protein = new_fastfood$protein[new_fastfood$restaurant=='Sonic']
+Sonic_Protein
+
+Arbys_Protein= new_fastfood$protein[new_fastfood$restaurant=='Arbys']
+Arbys_Protein
+```
+
+**Average Protein Content (g) of Fast Food According to Restaurant Type **
+
+```{r}
+meanProtein <- mean(Mcdonalds_Protein)
+meanProtein
+
+meanProtein <- mean(BurgerKing_Protein)
+meanProtein
+
+meanProtein <- mean(Subway_Protein)
+meanProtein
+
+meanProtein <- mean(TacoBell_Protein)
+meanProtein
+
+meanProtein <- mean(Dairy_Queen_Protein)
+meanProtein
+
+meanProtein <- mean(ChickFilA_Protein)
+meanProtein
+
+meanProtein <- mean(Sonic_Protein)
+meanProtein
+
+meanProtein <- mean(Arbys_Protein)
+meanProtein
+```
+
+**Average calorie of Protein Content of Fast Food According to Restaurant Type **
+
+calorie of Protein = Protein (g) * 4 kcal
+
+
+```{r}
+calorieProtein <- mean(Mcdonalds_Protein)*4
+calorieProtein
+
+calorieProtein <- mean(BurgerKing_Protein)*4
+calorieProtein
+
+calorieProtein <- mean(Subway_Protein)*4
+calorieProtein
+
+calorieProtein <- mean(TacoBell_Protein)*4
+calorieProtein
+
+meanProtein <- mean(Dairy_Queen_Protein)*4
+meanProtein
+
+calorieProtein <- mean(ChickFilA_Protein)*4
+calorieProtein
+
+calorieProtein <- mean(Sonic_Protein)*4
+calorieProtein
+
+calorieProtein <- mean(Arbys_Protein)*4
+calorieProtein
+```
+
+
+**Separation of total carbohydrate quantity data according to their restaurant type**
+```{r}
+Mcdonalds_Carb=new_fastfood$total_carb[new_fastfood$restaurant=='Mcdonalds']
+Mcdonalds
+
+BurgerKing_Carb=new_fastfood$total_carb[new_fastfood$restaurant=='Burger King']
+BurgerKing_Carb
+
+Subway_Carb=new_fastfood$total_carb[new_fastfood$restaurant=='Subway']
+Subway_Carb
+
+TacoBell_Carb = new_fastfood$total_carb[new_fastfood$restaurant=='Taco Bell']
+TacoBell_Carb
+
+ChickFilA_Carb = new_fastfood$total_carb[new_fastfood$restaurant=='Chick Fil-A']
+ChickFilA_Carb
+
+Dairy_Queen_Carb = new_fastfood$total_carb[new_fastfood$restaurant=='Chick Fil-A']
+Dairy_Queen_Carb
+
+Sonic_Carb = new_fastfood$total_carb[new_fastfood$restaurant=='Sonic']
+Sonic_Carb
+
+Arbys_Carb= new_fastfood$total_carb[new_fastfood$restaurant=='Arbys']
+Arbys_Carb
+```
+
+
+**Average calorie of total carbohydrate Content of Fast Food According to Restaurant Type **
+
+calorie of Carbohydrate = Carbohydrate (g) * 4 kcal
+
+```{r}
+calorieCarb <- mean(Mcdonalds_Carb)*4
+calorieCarb
+
+calorieCarb <- mean(BurgerKing_Carb)*4
+calorieCarb
+
+calorieCarb <- mean(Subway_Carb)*4
+calorieCarb
+
+calorieCarb <- mean(TacoBell_Carb)*4
+calorieCarb
+
+calorieCarb<- mean(Dairy_Queen_Carb)*4
+calorieCarb
+
+calorieCarb <- mean(ChickFilA_Carb)*4
+calorieCarb
+
+calorieCarb <- mean(Sonic_Carb)*4
+calorieCarb
+
+calorieCarb <- mean(Arbys_Carb)*4
+calorieCarb
+```
+**Separation of calorie from fat data according to their restaurant type**
+
+```{r}
+Mcdonalds_cal_fat=new_fastfood$cal_fat[new_fastfood$restaurant=='Mcdonalds']
+Mcdonalds_cal_fat
+
+BurgerKing_cal_fat=new_fastfood$cal_fat[new_fastfood$restaurant=='Burger King']
+BurgerKing_cal_fat
+
+Subway_cal_fat=new_fastfood$cal_fat[new_fastfood$restaurant=='Subway']
+Subway_cal_fat
+
+TacoBell_cal_fat = new_fastfood$cal_fat[new_fastfood$restaurant=='Taco Bell']
+TacoBell_cal_fat
+
+ChickFilA_cal_fat = new_fastfood$cal_fat[new_fastfood$restaurant=='Chick Fil-A']
+ChickFilA_cal_fat
+
+Dairy_Queen_cal_fat = new_fastfood$cal_fat[new_fastfood$restaurant=='Chick Fil-A']
+Dairy_Queen_cal_fat
+
+Sonic_cal_fat= new_fastfood$cal_fat[new_fastfood$restaurant=='Sonic']
+Sonic_cal_fat
+
+Arbys_cal_fat= new_fastfood$cal_fat[new_fastfood$restaurant=='Arbys']
+Arbys_cal_fat
+```
+
+
+**Average calorie of total fat Content of Fast Food According to Restaurant Type **
+
+```{r}
+meancal_fat <- mean(Mcdonalds_cal_fat)
+meancal_fat
+
+meancal_fat <- mean(BurgerKing_cal_fat)
+meancal_fat
+
+meancal_fat <- mean(Subway_cal_fat)
+meancal_fat
+
+meancal_fat <- mean(TacoBell_cal_fat)
+meancal_fat
+
+meancal_fat <- mean(Dairy_Queen_cal_fat)
+meancal_fat
+
+meancal_fat <- mean(ChickFilA_cal_fat)
+meancal_fat
+
+meancal_fat <- mean(Sonic_cal_fat)
+meancal_fat
+
+meancal_fat <- mean(Arbys_cal_fat)
+meancal_fat
+```
+
+
+**Making a new data frame**
+```{r}
+rest <- c('Mcdonalds', 'BurgerKing', 'Subway', 'TacoBell','ChickFilA', 'Sonic', 'Arbys', 'Dairy_Queen')
+meanCalorie <- c(640, 609, 503, 444, 384, 632, 533, 520)
+calorieProtein<-c(161, 120, 121, 70, 127, 117,117, 127)
+calorieCarb<-c(195, 156, 219, 187, 115, 189, 179, 115)
+meancal_fat<-c(286, 328, 165, 188, 145, 338, 237, 145)
+newfastfood <- data.frame(rest, meanCalorie, calorieProtein,calorieCarb,meancal_fat)
+newfastfood
+```
+https://www.dataquest.io/blog/how-to-create-a-dataframe-in-r/
+
+
+**Bar Plot for data visualization**
+
+```{r}
+library(ggplot2)
+barplot<-ggplot( newfastfood, aes(x=rest, y=meanCalorie) ) + geom_bar(stat="identity",width = 0.65, fill="#9681EB") +xlab("Restaurant Type") +ylab("Average Total Calorie value")
+   
+barplot
+```
+
+
+References:
+
+https://www.data-to-viz.com/graph/barplot.html
+
+This bar plot indicates the average total calorie value of each restaurant in the studied food chain. X axis of the graph represents the type of restaurant while the y axis shows the average of total calorie values of each restaurant. The research question made to find out whether there is a difference between average total calorie value of fast food in the McDonalds and the Burger King.According to this graph there is a slightly higher total calorie content in McDonalds compare to Burger King which can help to agree with our alternative hypothesis. However, when compare all restaurant types,Chick Fill-A shows the lowest total calorie content while McDonalds shows the highest calorie value. Restaurant Sonic contains a total calorie content that is very closer to the value of McDonalds. 
+
+
+https://r-graph-gallery.com/48-grouped-barplot-with-ggplot2.html
+
+
+**Performing Paired T test**
+```{r}
+t.test(Mcdonalds, BurgerKing, alternative="greater", paired=FALSE, var.equal=FALSE, conf.level=0.95)
+```
+After Performing the t-test correctly I got a p-value of 0.03032. Since this is 
+greater than 0.05, can consider that it is not statistically significant : There is no significant difference between total calorie content of McDonalds and BurgerKing.
+
+
+### Visualization 2
+
+**Scatter Plot for data visualization**
+```{r}
+
+library(hrbrthemes)
+```
+
+```{r}
+my_plot<-ggplot(fastfood, aes(x=cal_fat, y=calories)) +  geom_point(size=1, color="red") + geom_smooth(method=lm , color="blue", se=FALSE) +
+  theme_ipsum() + xlab("Calorie from Fat") +ylab("Total Calorie Content") 
+my_plot
+```
+
+Reference:
+https://r-graph-gallery.com/274-map-a-variable-to-ggplot2-scatterplot.html
+https://r-graph-gallery.com/50-51-52-scatter-plot-with-ggplot2.html
+
+
+Above chart is a scatter plot that indicates the relationship between total calorie content of each food item in each restaurant and their calorie contribution from total fat. This graph indicates a positive relationship. It supports the alternative hypothesis of higher amount of total fat content results higher total calorie content in fast foods.
+Moreover, calorie content of most of food items from fat ranges within 0 to 500 kcal and total calorie content spreads 0 to 1000 kcal.
+
+
+**Statistical Test to Find out Correlation between Total Calorie Content and Total Calorie from Fat **
+
+Calculating a single correlation
+```{r}
+fastfood$calories
+```
+```{r}
+fastfood$cal_fat
+```
+```{r}
+cor.test ( fastfood$calories , fastfood$cal_fat )
+```
+The relationship between the total calorie content and total calorie from fat was significant, r(513)=0.9, p= less than 2.2e-16. As the correlation was positive,  this indicates that increase in calorie from fat is related to an increment in total calorie.
+
+Reference:
+https://www.adelaide.edu.au/mathslearning/system/files/media/documents/2021-07/Correlations-in-R.pdf
+
+## Conclusion
+
+As a conclusion,
+
+-   There is no significant difference between total calorie content between McDonalds and BurgerKing restaurants.
+-   There is a strong positive relationship between total calorie content and calorie from total fat of fast foods.
+
+-   Though, I planned to use a stacked bar plot for visualization 1, it was not success because I used only one categorical variable with two numerical variables. Hence, I plotted a bar plot for data visualization.

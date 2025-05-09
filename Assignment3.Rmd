@@ -1,0 +1,79 @@
+---
+title: "R Notebook"
+output:
+  word_document: default
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+
+Madusha Lakmali Wijesinghe
+M23W0114
+
+
+
+
+
+
+```{r}
+library("rpart")
+```
+
+```{r}
+train_data <- read.csv("C:/Users/A576/Desktop/Titanic/train.csv")
+test_data <- read.csv("C:/Users/A576/Desktop/Titanic/test.csv")
+```
+
+```{r}
+# Build a decision tree model
+decision_tree_model <- rpart(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked, data= train_data, method = "class")
+```
+
+```{r}
+# Visualize the decision tree
+plot(decision_tree_model)
+text(decision_tree_model, cex = 0.6)
+```
+
+```{r}
+# Make predictions on the test set
+prediction <- predict(decision_tree_model, newdata = test_data, type = "class")
+```
+
+```{r}
+# Add the predicted 'Survived' column to your test_data 
+test_data$Survived <- prediction
+```
+
+```{r}
+# Confusion matrix
+conf_matrix <- table(prediction, test_data$Survived)
+conf_matrix
+```
+```{r}
+# Calculate accuracy
+accuracy<- sum(diag(conf_matrix)) / sum(conf_matrix)
+cat("Accuracy:", accuracy, "\n")
+```
+According to the resulted confusion matrix, the classifier correctly predicted 130 instances of class 1 as true positives.
+288 instances of class 0 correctly predicted as True Negatives by the classifier.
+The classifier incorrectl  predicted to  instances of class 1 as False Negatives and 0 instances of class 0 as  False positives.
+
+
+For this matrix, computed accuracy is 130+ 288 / (130+288+0+0) = 1. This indicates the  peprfect accuracy. confusion matrix indicates that classifier has performed perfectly on the test data with no    false positives or false negatives.
+
+In here, class 0 represents the number of passengers who did not survive and according to the confusion matrix, it shows as 288 passengers were died actually as well as the predicted count also was same. 
+On the other hand, total numper of survivals are represented as True positive and it is value is 130.
+
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

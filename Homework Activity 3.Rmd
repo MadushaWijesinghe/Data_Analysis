@@ -1,0 +1,149 @@
+---
+title: "R Notebook"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*.
+
+# Load the required packages
+```{r}
+library(lme4)
+library(ggplot2)
+library(dplyr)
+```
+
+# Create a Dataset
+```{r}
+set.seed(123)
+
+```
+# for reproducibility
+
+
+# Simulated Data
+```{r}
+location<-factor(rep(1:3, each=100))
+date<-rep(seq.Date(from = as.Date("2023-01-01"), by="days",length.out = 100), times=3)
+temperature<-rnorm(300, mean=25, sd=5)
+precipitation<- rpois(300, lambda = 10)
+ice_cream_sales<-1000+20*temperature-10*precipitation+rnorm(300, mean = 0, sd=100)
+```
+
+#Create the Dataset
+
+```{r}
+ice_cream_data<- data.frame(Location=location, Date=date, Temperature= temperature, Precipitation=precipitation, IceCreamsales=ice_cream_sales)
+```
+
+
+#Check the first few raws of the data set
+```{r}
+head(ice_cream_data)
+```
+```{r}
+summary(ice_cream_data)
+```
+#convert location to a factor:Data Preprpcessing
+```{r}
+ice_cream_data$Location<-as.factor(ice_cream_data$Location)
+```
+
+#Check for missing values
+```{r}
+sum(is.na(ice_cream_data))
+
+```
+#scatter plot of Temprature vs. IceCreamSales:Data Visualization
+```{r}
+ggplot(ice_cream_data,aes(x=Temperature, y=IceCreamsales))+geom_point()+labs(x="Temperature(°C)", y="Ice Cream Sales")
+```
+
+
+#There is a strong positive relationship between temperature and ice cream sales.
+
+
+
+#scatter plot of Precipitation vs. IceCreamSales:Data Visualization
+```{r}
+ggplot(ice_cream_data,aes(x=Precipitation, y=IceCreamsales))+geom_point()+labs(x="Precipitation(mm)", y="Ice Cream Sales")
+```
+
+
+#Ice cream sales were high when the precipitation was 5-15 mm.
+
+# Fit the mixed-effects model
+```{r}
+ice_cream_model<-lmer(IceCreamsales~Temperature+Precipitation+(1|Location), data = ice_cream_data)
+```
+
+
+# Check Model Summary# 
+```{r}
+summary(ice_cream_model)
+```
+##Interpretation
+
+Formula used for the model is IceCreamsales ~ Temperature + Precipitation + (1 | Location), which means modeling the variation in IceCreamsales with a random intercept for each level of the Location grouping variable. 
+
+REML criterion at convergence is 3619.1. Since, this value is large, it does not show the REML criterion is better fit to the data. 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-2.56961 -0.65795  0.02701  0.59883  2.55986 
+
+values of scaled residuals lies slightly closer to zero, indicating the moodel fits to data. Most minimun value of the dataset is approximately -2.56961 while the maximum value is 2.55986. Moreover, 25% of residuals are below -0.65795, median is 0.02701 and 75% of residuals are below 0.59883.
+
+The median is close to zero. this indicates that, on average, the models predictions are reasonably close to the observed values.
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Location (Intercept)     0      0.0   
+ Residual             10636    103.1   
+Number of obs: 300, groups:  Location, 3
+
+Randon effects associated with Location and residual variation. Variance betwen diffrent location is 0 and standard deviation is 0.0
+
+Number of oobservations are 300. data is grouped by Location and there are 3 groups.
+
+Fixed effects:
+              Estimate Std. Error t value
+(Intercept)   1008.721     37.197  27.118
+Temperature     19.414      1.262  15.383
+Precipitation   -8.867      1.960  -4.523
+
+The estimate of the intercept is 1008.721, and the standard error is 37.197
+t-value measures the significance of the estimate. A t-value of 27.118 suggests that the intercept is highly significant.
+
+In summary, the model suggests that there is significant variability in the  IceCreamsales between different temperture and precipitation, as indicated by the random effects associated with location.
+
+The fixed effect intercept of 1008.721 represents the average IceCreamsales across all locations. The model has captured and accounted for the variation in IceCreamsales among locations by including random intercepts.
+
+
+#Predicted vs. Observed Ice Cream sales: Visualize Results
+
+```{r}
+ice_cream_data$PredictedSales<-predict(ice_cream_model,newdata=ice_cream_data)
+```
+
+```{r}
+ggplot(ice_cream_data, aes(x=PredictedSales, y=IceCreamsales))+geom_point()+labs(x="Predicted Sales", y="Observed Sales")
+```
+
+
+#There is a positive relationship between predicted sales and observed sales of Ice Cream.
+
+# Random effects by Location
+```{r}
+ranef(ice_cream_model)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

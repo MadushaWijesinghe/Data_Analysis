@@ -1,0 +1,298 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Project Specification:#
+
+# Performing Exploratory & Machine Learning based Data Analysis using R Language / RStudio IDE #
+
+# Madusha Wijesinghe #
+# M23W0114 #
+
+# Title: Wine #
+
+# Why the topic seems fascinating, motivating and challenging? #
+
+Wine is well known as it mention that it contains phytochemicals and it gives health benefits. So a lot of research conduct on this topic and general public also tend find about wine and its health benefits. This topic is bit challenging because it is difficult to prove direct health benefits as outcomes. However, this data set has produced in Italy.
+
+
+# Describe your dataset: #
+# o What the data presents and provide its specific URL (weblink)? #
+This data set presents information on chemical analysis of wines groown in the same region in Italy but derived in three different areas. The analysis identified the quantities of 13 constituents found in each of the three types of wine: Barolo, Grignolino, Barbera. 
+
+https://archive.ics.uci.edu/dataset/109/wine
+
+
+# o What makes the data interesting and useful? #
+ data is interesting and useful since they can use to exploring Wine Characteristics. The dataset contains various attributes of 3 different wines, such as alcohol content, total flavonoids, phenols and so on. Analyzing these attributes can help understand the diversity and quality of different wines.
+
+
+# o What makes the data significant, relevant, and applicable? #
+
+When look at the aspect of Health and Nutrition: Wine contains various phytochemical compounds that may have health benefits when consumed in moderation. Analyzing the dataset and doing further studies, researchers and health professionals study the relationship between wine attributes (e.g., phenolic content) and health outcomes, contributing to the understanding of wine's role in a healthy lifestyle.
+
+# o Describe the dataset that you were provided with. What does the dataset that you are using contain? What do the features (variables) of the dataset mean or refer to? #
+
+I have provided Wine data set. It contains 3 typpes of alcohols as class and considered attributes of wines such as alcohol content, total phenols, Ash etc as mentioned below under the section of structure of wine data set. It contains with 178 observations of 14 variables. 
+
+
+
+
+
+```{r}
+wine_data <- read.csv("C:/Users/A576/Desktop/Report/wine.data",header = FALSE)
+wine_data
+```
+# Rename Columns #
+```{r}
+names(wine_data) <- c("class", "Alcohol", "Malicacid", "Ash", "Alcalinity_of_ash", "Magnesium", "Total_phenols", "Flavanoids", "Nonflavanoid_phenols", "Proanthocyanins", "Color_intensity", "Hue", "0D280_0D315_of_diluted_wines", "Proline"   )
+```
+
+```{r}
+head(wine_data)
+```
+
+
+```{r}
+str(wine_data)
+```
+
+```{r}
+summary(wine_data)
+
+
+
+```
+
+# o Recount the splitting process of data into test | train samples. #
+```{r}
+# Define input and output variables
+X <- wine_data$Alcohol  # Input feature (Alcohol)
+Y <- wine_data$Class    # Output variable (Class)
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Split data into training (70%) and testing (30%) sets
+train_indices <- sample(seq_len(nrow(wine_data)), 0.7 * nrow(wine_data))
+train_data <- wine_data[train_indices, ]
+test_data <- wine_data[-train_indices, ]
+
+```
+
+```{r}
+# Check class distribution in training set
+table(train_data$Class)
+
+# Check class distribution in testing set
+table(test_data$Class)
+```
+
+```{r}
+# Split data into training (60%), validation (20%), and testing (20%) sets
+train_indices <- sample(seq_len(nrow(wine_data)), 0.6 * nrow(wine_data))
+train_data <- wine_data[train_indices, ]
+
+remaining_indices <- setdiff(seq_len(nrow(wine_data)), train_indices)
+valid_indices <- sample(remaining_indices, 0.2 * nrow(wine_data))
+valid_data <- wine_data[valid_indices, ]
+
+test_indices <- setdiff(remaining_indices, valid_indices)
+test_data <- wine_data[test_indices, ]
+```
+
+
+
+
+
+## ② Data Exploration. ##
+
+# Present your visual illustrations: #
+
+# o Prepare at least two visualizations exploring different perspectives of your opted dataset. #
+#o Explain why you chose these 2 particular visualizations and describe what they say about the data.#
+
+# Visualization - Box Plot #
+```{r}
+# Load required library
+library(ggplot2)
+
+
+# Create boxplot
+ggplot(wine_data, aes(x = class, y = Alcohol, fill = class)) +
+  geom_boxplot() +
+  labs(title = "Distribution of Alcohol Among Wine Classes",
+       x = "Wine Class",
+       y = "Alcohol") +
+  theme_minimal()
+```
+I chose box plot to visualize how the alcohol content distributes among 3 types of wines. Accoording to box plot only class 2 data contains ouitliers. Alcohol percentage is highest in class 1 (median=13.75), Lowest in class 2 (median=12.4) and class 3 contains average of around 13.2.
+
+
+# Create a bar plot to visualize the distribution of wine classes
+```{r}
+
+class_distribution <- ggplot(wine_data, aes(x = class)) +
+  geom_bar(fill = "skyblue", color = "black") +
+  labs(title = "Distribution of Wine Classes",
+       x = "Wine Class",
+       y = "Frequency") +
+  theme_minimal()
+
+# Display the bar plot
+print(class_distribution)
+```
+
+I use this bar plot to illustrate the frequency of wine class distribution among data set. According to the graph, highest frequency of distribution shows by class 2 wine and it is about 70%. 60% and 49% distribution shows by class 1 and class 3 respecively.
+
+
+
+
+
+# ③ Frame a supervised machine learning model #
+
+# Explain with clarity the context of your problem statement to be solved: #
+
+# o What’s your main research question and its associated hypotheses if any exists? #
+
+
+Research Question:
+Does the combination of various attributes in wine (such as alcohol content, acidity, density, etc.) accurately predict the class of wine?
+
+Hypotheses:
+
+Null Hypothesis (H0): There is no significant relationship between the combination of wine attributes and its class.
+
+Alternative Hypothesis (H1): The combination of wine attributes is significantly related to its class, and therefore, can be used to predict the class of wine.
+
+# o Why did you choose your specific ML algorithm to study the data (what makes it suitable to this data)? #
+Handling Mixed Data Types: Decision trees can handle both numerical and categorical features without requiring preprocessing like normalization  which simplifies the modeling process.
+Handling Non-linearity: Decision trees can capture non-linear relationships between features and the target variable, which is advantageous when dealing with complex datasets like wine attributes.
+
+```{r}
+library(rpart)
+library(rpart.plot)
+```
+
+
+```{r}
+tree_model <- rpart(class  ~ Alcohol + Malicacid  + Total_phenols  +Flavanoids + Proanthocyanins, data = wine_data, method = "class")
+```
+
+```{r}
+summary(tree_model)
+```
+
+```{r}
+rpart.plot(tree_model, box.palette = "auto", branch.lty = 3, tweak = 1.2)
+```
+According to the decision tree model first consider about the Alcohol content. If Alcohol content >=13 and Flavonoids >= 1.6, 38% belongs to class 1 wine and Alcohol content >=13 and Flavonoids <= 1.6, 21 % belong to class 3. Alcohol content <=13 and Flavonoids >= 0.96, wine belongs to class 2 and Alcohol content <=13 and Flavonoids <= 1.6, 6% of wine belongs to class 3.
+
+
+
+# ④ Making Predictions Scenarios: #
+
+# o Ploting ML model’s summary correctly and/or conducting some statistical tests suitable to your study. #
+# o Generate apt table/graphics/plots for illustrating findings. #
+# o Present in your own-words the model’s performance analysis via average mean squared difference (MSE), confusion matrix, P-Value, and/or alternative evaluation metrics, & so on.#
+# o Ascertain that a functional model has been properly fitted to dataset and its results are adequately interpreted. Several variations of ML models can be attempted to check for attaining the best accuracy/precision # #
+
+
+```{r}
+# Load required libraries
+library(rpart)
+library(caret)
+
+
+# Split data into training and testing sets
+set.seed(123)
+train_index <- createDataPartition(wine_data$class, p = 0.8, list = FALSE)
+train_data <- wine_data[train_index, ]
+test_data <- wine_data[-train_index, ]
+
+# Fit a decision tree model
+wine_tree <- rpart(class ~ ., data = train_data, method = "class")
+
+
+
+# Predict on the test set
+predictions <- predict(wine_tree, newdata = test_data, type = "class")
+
+# Convert predictions to a factor
+predictions <- as.factor(predictions)
+
+# Make sure test_data$class is also a factor
+test_data$class <- as.factor(test_data$class)
+
+# Evaluate model performance
+confusion_matrix <- confusionMatrix(predictions, test_data$class)
+print(confusion_matrix)
+```
+This confusion matrix represents the performance of the classification model. Each row of the matrix represents the instances in a predicted class, while each column represents the instances in an actual class. 
+The model predicted class 1 correctly 11 times, incorrectly predicted it as class 2 once, and made no mistakes predicting it as class 3.
+The model correctly predicted class 2 13 times and made no mistakes predicting it as class 1 or class 3.
+The model correctly predicted class 3 nine times and made no mistakes predicting it as class 1 or class 2.
+
+Accuracy: The proportion of correct predictions made by the model. In this case, the model has an accuracy of 97.06%, indicating that it correctly predicts the class of wine for approximately 97 out of every 100 instances.
+
+In this case, the confidence interval (CI) ranges from 84.67% to 99.93%.
+
+A small p-value ( 3.92e-12) indicates that the model's accuracy is significantly better than chance.
+
+Overall, these statistics suggest that the model performs very well in classifying wine instances, with high accuracy and agreement with the actual classes.
+
+
+
+## ⑤ Instead of writing a separate elaborated report just represent your project’s synopsis:― ##
+
+# o What’s the nature, structure and scope of your data & how did you explore the data through visualizations? #
+
+The wine data set consists with 14 variables including the class of wine and other attributes such as alcohol, ash, flavonoids, color intensity etc. This data set can use to analyze the type of wine according to their characteristics/attributes.
+
+I used visualizations to identify distribution of alcohol content according to the wine class(Box plot) and frequency of distribution off wine type through out the data set(Bar chart). 
+
+
+# Did you rightly select ML model and executed the tests successfully? #
+
+Yes. I obtained the correct results after succesfull execution.
+
+# What is the outcome of your investigations? #
+
+According to the decision tree model first consider about the Alcohol content. If Alcohol content >=13 and Flavonoids >= 1.6, 38% belongs to class 1 wine and Alcohol content >=13 and Flavonoids <= 1.6, 21 % belong to class 3. Alcohol content <=13 and Flavonoids >= 0.96, wine belongs to class 2 and Alcohol content <=13 and Flavonoids <= 1.6, 6% of wine belongs to class 3.
+
+
+#  o In a nutshell, compile in 10~12 lines what does your findings on the whole represent? Write it in such a way that a lay person will gain a better sense of your data analysis project. #
+
+Using the wine dataset, which contains a variety of properties including Phenols, flavonoids, and alcohol concentration, among others, I tried to figure out what makes each sort of wine unique. I looked at the distribution of alcohol content among wine classes and the frequency of each type of wine in the dataset. For that I used visualizations like box plots and bar charts. Using a decision tree model, I discovered that a significant determinant of wine class was alcohol content. To be more precise, wines falling into class 3 were primarily those with alcohol content below 13% and flavonoid levels below 1.6%. Further, wines with alcohol content over or equal to 13% and flavonoid levels above 1.6% primarily belonged to class 1. Generally, wines that fell in between these ranges were classified as class 2. These results clarify the connections between wine characteristics and classes. Then, I used confusion matrix and statistical tests like accuracy and precision to evaluate the developed model. According to the results obtained, the decision tree model well fitted with the data set and my study question. Furthermore, these findings offer new perspectives for wine classification research and comprehension.
+
+
+
+
+
+
+
+# Naive Bayes Analysis #
+```{r}
+library(e1071)
+library(caret)
+```
+
+
+```{r}
+set.seed(124)
+indexes= createDataPartition(wine_data$class, p=.9, list = F)
+train = wine_data[indexes, ]
+test =wine_data[-indexes, ]
+```
+
+
+```{r}
+nbiris = naiveBayes(class~ .,data=wine_data)
+print(nbiris)
+
+```
+
+

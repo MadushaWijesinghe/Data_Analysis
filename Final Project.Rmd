@@ -1,0 +1,150 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+
+# **50 bestselling books on Amazon from 2009 to 2019**
+## **Introduction to the Dataset**
+The data set contains information about the top 50 bestselling books on Amazon from 2009 to 2019.
+The dataset contains the following columns
+Name: The title of the book.
+Author: The author of the book.
+User Rating: The average user rating given to the book (on a scale of 1 to 5).
+Reviews: The total number of reviews received for the book.
+Price: The price of the book. 
+Year: The year when the book was one of the bestselling titles.
+Genre: The genre of the book.
+
+Books have been an invaluable part of my life, serving as a means to escape from reality. As an ardent reader, I find solace, inspiration, and knowledge within their pages. They transport me to different worlds, cultures, and perspectives, temporarily offering respite from my own circumstances.  I recognize that books serve as both a refuge and a catalyst for transformation. By harnessing their power, I can enhance my own growth. 
+
+With this data set I would like to do a Genre Analysis to analyse the popularity of different genres over time and  analyse the performance of book sales, user ratings, or reviews and by that it is possible to understand the factors contributing to their success.
+
+I would like to conduct a comprehensive Genre Analysis to assess the evolving popularity of various literary genres over time. Additionally, I aim to perform an in-depth Author Analysis to evaluate the success of different authors based on critical factors such as book sales, user ratings, and reviews. By delving into these aspects, I intend to uncover the key factors that contribute to their achievements and gain valuable insights into the literary landscape.
+
+#### **Source for the Dataset**
+https://www.kaggle.com/datasets/sootersaalu/amazon-top-50-bestselling-books-2009-2019
+
+
+## **Data Set**
+```{r}
+AmazonBooks <- read.csv(file.choose(), header= TRUE)
+```
+```{r}
+AmazonBooks
+```
+```{r}
+unique(AmazonBooks$Name)
+
+```
+Here I have presented all the list of books provided in the dataset. 
+
+Unique function was used to eliminate duplicate values(Name of the books)
+
+Source: https://www.digitalocean.com/community/tutorials/unique-function-r-programming
+
+
+## **Research Questions**
+
+### Research question 1
+Is there any major difference in the rating given by the readers between fiction and non-fiction books?
+
+### Research question 2
+Does the average price of the books changes between different year?
+
+##  Hypothesis
+
+### Question 1: 
+Null Hypothesis: There is no significant difference in user ratings between fiction and non-fiction books.
+
+Alternative Hypothesis : There is a significant difference in user ratings between fiction and non-fiction books.
+
+### Question 2:
+Null Hypothesis : There is no significant difference in the average price of books between different years.
+
+Alternative Hypothesis : There is a significant difference in the average price of books between different years.
+
+
+## **Statistical Testing 1**
+### Independent T Test - Research Question 1
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+```{r}
+result <- t.test(User.Rating ~ Genre, data = AmazonBooks)
+```
+```{r}
+print(result)
+```
+### **Interpretaion**
+The p-value of 0.008859 is less than the significance level of 0.05, indicating strong evidence against the null hypothesis meaning that there is a statistically significant difference in user ratings between the "Fiction" and "Non Fiction" groups.
+
+Additionally, the sample means suggest that the average rating in the "Fiction" group is slightly higher than the average rating in the "Non Fiction" group.
+
+#### **Reference**
+https://stat-methods.com/home/independent-samples-t-test-r-2/
+
+## ** Statistical Testing 2 - Research Question 2
+```{r}
+result <- aov(Price ~ Year, data = AmazonBooks)
+```
+```{r}
+anova_table <- summary(result)
+```
+
+```{r}
+print(anova_table)
+```
+### **Interpretation**
+Here, we can conclude that there is some variability in book prices across different years.  The p-value is very small (0.000289), which is below the common significance threshold of 0.05. So we can reject the null hypothesis.The data shows that there is a significant difference in the average price of books across the years. 
+
+#### **Reference**
+https://www.geeksforgeeks.org/anova-test-in-r-programming/
+
+
+
+## **Visualization 1**
+```{r}
+library(ggplot2)
+```
+```{r}
+ggplot(AmazonBooks, aes(x= Genre, y= User.Rating, fill= Genre)) +geom_bar(stat = "identity",position = "dodge")
+
+```
+### **Interpretation**
+The x-axis is labeled as "Genre," and the y-axis is labeled as "User Rating." The genre is divided into two categories: Fiction and Non-Fiction. When looking at the bar chart, it can be observed that there isn't much difference between the two categories. Upon thorough analysis, it becomes evident that both genres have a maximum rating of approximately 4.6 to 4.8.
+
+#### **Reference**
+https://r-graph-gallery.com/48-grouped-barplot-with-ggplot2
+https://www.youtube.com/watch?v=-bPjGgD5bZQ&t=22s&ab_channel=ChadC.Williams
+
+
+## **Visualization 2 **
+```{r}
+average_prices <- AmazonBooks %>%
+  group_by(Year) %>%
+  summarize(Average_Price = mean(Price, na.rm = TRUE))
+```
+```{r}
+ggplot(average_prices, aes(x = Year, y = Average_Price)) +
+  geom_line() +
+  labs(x = "Year", y = "Average Price", title = "Average Price of Books Over Years") +
+  theme_minimal()
+```
+### **Interpretation**
+The x-axis is titled as "Year," and the y-axis is titled as "Average Price." Before plotting the line graph, the average price for each year was calculated. The graph clearly indicates a significant change in prices over the years, with a considerable difference in the average price of books.
+
+#### **Reference**
+https://r-graph-gallery.com/line-chart-ggplot2.html
+https://stackoverflow.com/questions/71972537/how-can-i-in-r-group-by-id-and-summarise-by-mean-with-na-rm-true
+https://dplyr.tidyverse.org/reference/group_by.html
+
+
+
+
+
